@@ -53,6 +53,10 @@ function glo {
     git log --oneline -n 15
 }
 
+function gb {
+    git branch
+}
+
 function gbn {
     git rev-parse --abbrev-ref HEAD
     git rev-parse --abbrev-ref HEAD | Set-Clipboard
