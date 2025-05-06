@@ -47,6 +47,13 @@ function editprofile {
     code $PROFILE
 }
 
+# node
+function nomodules {
+    Get-ChildItem -Path . -Recurse -Directory -Name node_modules | ForEach-Object {
+        Remove-Item -Recurse -Force $_
+    }
+}
+
 Set-Alias g git
 
 function glo {
