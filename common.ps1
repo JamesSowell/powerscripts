@@ -3,9 +3,6 @@
 Set-Alias vim nvim
 Set-Alias ll ls
 Set-Alias cs clear
-Set-Alias g git
-Set-Alias gbn git rev-parse --abbrev-ref HEAD | Set-Clipboard
-Set-Alias gbh git rev-parse --short HEAD
 Set-Alias grep findstr
 Set-Alias -Name rl -Value Invoke-History
 
@@ -50,14 +47,24 @@ function editprofile {
     code $PROFILE
 }
 
+Set-Alias g git
 
 function glo {
     git log --oneline -n 15
 }
 
+function gbn {
+    git rev-parse --abbrev-ref HEAD
+    git rev-parse --abbrev-ref HEAD | Set-Clipboard
+}
+
+function gbh {
+    git rev-parse --short HEAD
+    git rev-parse --short HEAD | Set-Clipboard
+}
 
 
-function SwitchToNextBranch {
+function gnb {
     # get name of the current branch
     $currentBranch = git rev-parse --abbrev-ref HEAD
 
