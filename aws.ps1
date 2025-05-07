@@ -34,10 +34,11 @@ function dstackgetname {
     #     return
     # }
 
-    $stackInfo = aws cloudformation list-stacks | jq -r --arg keyword "$keyword" '[.StackSummaries[]] | select(.StackName | contains($keyword)) | [.StackName, .StackStatus]]' | ConvertFrom-Json
+    $stackInfo = aws cloudformation list-stacks | jq -r --arg keyword "$keyword" '[.StackSummaries[] | select(.StackName | contains($keyword)) | [.StackName, .StackStatus]]' | ConvertFrom-Json
 
     if (-not $stackInfo -or $stackInfo.Count -le $index) {
         Write-Host "No stack found with the keyword '$keyword' at index $index."
+        return
     }
 
     # extract the stack name and status
