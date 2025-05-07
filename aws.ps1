@@ -27,10 +27,10 @@ function dstackgetname {
     }
     
     # Giving false negatives not sure why right now
-    if (-not $index -or $index -lt 0){
-        Write-Host "please provide a valid index (0 or greater)."
-        return
-    }
+    # if (-not $index -or $index -lt 0){
+    #     Write-Host "please provide a valid index (0 or greater)."
+    #     return
+    # }
 
     $stackInfo = aws cloudformation list-stacks | jq -r --arg "$keyword" '[.StackSummaries[]] | select(.StackName | contains($keyword)) | [.StackName, .StackStatus]]' | ConvertFrom-Json
 
