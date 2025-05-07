@@ -191,20 +191,7 @@ function dstackevent {
         $resourceType = $event.ResourceType
 
         # Set color based on resourceStatus
-        switch( $resourceStatus){
-            "ROLLBACK_COMPLETE" { Set-Color $red }
-            "ROLLBACK_FAILED" { Set-Color $red }
-            "CREATE_COMPLETE" { Set-Color $green }
-            "UPDATE_COMPLETE" { Set-Color $green }
-            "CREATE_IN_PROGRESS" { Set-Color $yellow }
-            "UPDATE_IN_PROGRESS" { Set-Color $yellow }
-            "DELETE_COMPLETE" { Set-Color $green }
-            "DELETE_IN_PROGRESS" { Set-Color $yellow }
-            "ROLLBACK_IN_PROGRESS" { Set-Color $yellow }
-            "CREATE_FAILED" { Set-Color $red }
-            "REVIEW_IN_PROGRESS" { Set-Color $orange }
-            default { Set-Color $default }
-        }
+        _SetCfnResourceColor($resourceStatus)
 
 
         # print ResoruceStatus
