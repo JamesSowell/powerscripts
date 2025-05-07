@@ -61,7 +61,7 @@ function dst {
     )
     
     # if given a number, then pull from the persisted values....
-    if (Is-Integer($userInput)) {
+    if (Is-Integer($userInput) -and $userInput -lt $global:lastFilteredStacks.Count) {
         # pull from the global!
         # extract the stack name and status
         $index = $userInput
@@ -75,22 +75,24 @@ function dst {
         # output the stack name and status
         Write-Host "Stack Name: $stackName"
         Write-Host "Stack Status: $stackStatus"
-        return
-    } 
-    
-    # returns raw JSON string, need to store this into a PS object!
-    $global:lastFilteredStacks = aws cloudformation list-stacks `
-    --query "StackSummaries[?contains(StackName,'$userInput')].[StackName, StackStatus]" `
-    --output json | ConvertFrom-Json
-    # perform jq on the response such that we can see it better
-    $i = 0
-    foreach($item in $global:lastFilteredStacks) {
-        Write-Host "[$i] StackName: $($item[0])"
-        Write-Host "     StackStatus: $($item[1])"
-        $i++
-    }
+    } elseif (Is-String($userInput)) {
+        # returns raw JSON string, need to store this into a PS object!
+        $global:lastFilteredStacks = aws cloudformation list-stacks `
+        --query "StackSummaries[?contains(StackName,'$userInput')].[StackName, StackStatus]" `
+        --output json | ConvertFrom-Json
+        # perform jq on the response such that we can see it better
+        $i = 0
+        foreach($item in $global:lastFilteredStacks) {
+            Write-Host "[$i] StackName: $($item[0])"
+            Write-Host "     StackStatus: $($item[1])"
+            $i++
+        }
 
-    Write-Host "`nTo copy a specific stack's name, run: dst <index>"
+        Write-Host "`nTo copy a specific stack's name, run: dst <index>"
+    } else {
+        Write-Error "not a valid input!"
+    }
+    
 
 }
 
@@ -121,6 +123,11 @@ function Is-Integer {
 
     [int]$tmp = 0
     return [int]::TryParse($userInput, [ref]$tmp)
+}
+
+function Is-Natural {
+    param($number)
+    return Is-Integer($number) -and $number -ge 0
 }
 
 function Is-String {
