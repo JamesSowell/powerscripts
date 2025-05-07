@@ -55,6 +55,79 @@ function dstackgetname {
     
 }
 
+function dst {
+    param (
+        [string]$userInput
+    )
+    
+    # if given a number, then pull from the persisted values....
+    if (Is-Integer($userInput)) {
+        # pull from the global!
+        # extract the stack name and status
+        $selectedStack = $global:lastFilteredStacks[$index]
+        $stackName = $selectedStack[0]
+        $stackStatus = $selectedStack[1]
+
+        # copy the stack name to clipboard
+        $stackName | Set-Clipboard
+
+        # output the stack name and status
+        Write-Host "Stack Name: $stackName"
+        Write-Host "Stack Status: $stackStatus"
+        return
+    } 
+    
+    $global:lastFilteredStacks = aws cloudformation list-stacks --query "StackSummaries[?contains(StackName,'$userInput')].[StackName, StackStatus]"
+    # perform jq on the response such that we can see it better
+    i$ = 0
+    foreach($item in $global:lastFilteredStacks) {
+        Write-Host "[$i] $($item.StackName)"
+        $i++
+    }
+
+    Write-Host "`nTo copy a specific stack's name, run: dst <index>"
+
+}
+
+
+function typeChecker {
+    param(
+        [Parameter(Mandatory)]
+        [string]$UserInput
+    )
+
+    # Declare a variable to store the parsed integer (even if you don’t use it)
+    [int]$nullResult = 0
+
+    if ([int]::TryParse($UserInput, [ref]$nullResult)) {
+        Write-Host "You passed an integer: $UserInput"
+        return true.exe
+    } elseif ($UserInput -match '[a-zA-Z]') {
+        Write-Host "You passed an alphabetic string: $UserInput"
+    } else {
+        Write-Host "Input didn't match any specific type: $UserInput"
+    }
+}
+
+
+# Helper functions
+function Is-Integer {
+    param([string]$userInput)
+
+    [int]$tmp = 0
+    return [int]::TryParse($userInput, [ref]$tmp)
+}
+
+function Is-String {
+    param($userInput)
+    return $userInput -is [string]
+}
+
+function nothingChecker {
+    param($userInput)
+    Write-Host "Nothing was entered"
+}
+
 
 function dstackevent {
     param(
