@@ -128,6 +128,14 @@ $global:yellow = [System.ConsoleColor]::Yellow
 $global:blue = [System.ConsoleColor]::Blue
 $global:orange = [System.ConsoleColor]::DarkYellow
 $global:default = [System.ConsoleColor]::White
+# Function to set color
+function Set-Color {
+    param(
+        [System.ConsoleColor]$color
+    )
+    [System.Console]::ForegroundColor = $color
+}
+
 
 # AWS helpers
 function _SetCfnResourceColor {
