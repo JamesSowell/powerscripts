@@ -77,7 +77,10 @@ function dst {
         return
     } 
     
-    $global:lastFilteredStacks = aws cloudformation list-stacks --query "StackSummaries[?contains(StackName,'$userInput')].[StackName, StackStatus]"
+    # returns raw JSON string, need to store this into a PS object!
+    $global:lastFilteredStacks = aws cloudformation list-stacks `
+    --query "StackSummaries[?contains(StackName,'$userInput')].[StackName, StackStatus]" `
+    --output json | ConvertFrom-Json
     # perform jq on the response such that we can see it better
     $i = 0
     foreach($item in $global:lastFilteredStacks) {
