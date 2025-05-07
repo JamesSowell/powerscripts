@@ -7,7 +7,9 @@ function dstacks {
         $maxResults = 10
     }
     
-    aws cloudformation list-stacks --query "StackSummaries[?contains(StackName,'$keyword')].[StackName, StackStatus]" --max-results $maxResults
+    aws cloudformation list-stacks --query "StackSummaries[?contains(StackName,'$keyword')].[StackName, StackStatus]" 
+    # check if there's a limit flag we cna use in lieu of this
+    # --max-results $maxResults
 }
 
 
