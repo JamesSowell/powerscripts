@@ -97,24 +97,6 @@ function dst {
 }
 
 
-function typeChecker {
-    param(
-        [Parameter(Mandatory)]
-        [string]$UserInput
-    )
-
-    # Declare a variable to store the parsed integer (even if you don’t use it)
-    [int]$nullResult = 0
-
-    if ([int]::TryParse($UserInput, [ref]$nullResult)) {
-        Write-Host "You passed an integer: $UserInput"
-        return true.exe
-    } elseif ($UserInput -match '[a-zA-Z]') {
-        Write-Host "You passed an alphabetic string: $UserInput"
-    } else {
-        Write-Host "Input didn't match any specific type: $UserInput"
-    }
-}
 
 
 # Helper functions
@@ -135,10 +117,7 @@ function Is-String {
     return $userInput -is [string]
 }
 
-function nothingChecker {
-    param($userInput)
-    Write-Host "Nothing was entered"
-}
+
 
 
 function dstackevent {
