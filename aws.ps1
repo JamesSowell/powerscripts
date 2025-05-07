@@ -1,8 +1,13 @@
 function dstacks {
     param (
-        [string]$keyword
+        [string]$keyword,
+        [int]$maxResults
     )
-    aws cloudformation list-stacks --query "StackSummaries[?contains(StackName,'$keyword')].[StackName, StackStatus]"
+    if ( -not $maxResults ){
+        $maxResults = 10
+    }
+    
+    aws cloudformation list-stacks --query "StackSummaries[?contains(StackName,'$keyword')].[StackName, StackStatus]" --max-results $maxResults
 }
 
 
