@@ -79,9 +79,10 @@ function dst {
     
     $global:lastFilteredStacks = aws cloudformation list-stacks --query "StackSummaries[?contains(StackName,'$userInput')].[StackName, StackStatus]"
     # perform jq on the response such that we can see it better
-    i$ = 0
+    $i = 0
     foreach($item in $global:lastFilteredStacks) {
-        Write-Host "[$i] $($item.StackName)"
+        Write-Host "[$i] StackName: $($item[0])"
+        Write-Host "     StackStatus: $($item[1])"
         $i++
     }
 
