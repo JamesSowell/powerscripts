@@ -47,6 +47,10 @@ function editprofile {
     code $PROFILE
 }
 
+function talonuser {
+    Set-Location $HOME\AppData\Roaming\talon\user
+}
+
 # node
 function nomodules {
     Get-ChildItem -Path . -Recurse -Directory -Name node_modules | ForEach-Object {
@@ -77,6 +81,8 @@ function gbh {
 function gpb {
     git switch -
 }
+
+
 function gnb {
     # get name of the current branch
     $currentBranch = git rev-parse --abbrev-ref HEAD
