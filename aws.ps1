@@ -84,8 +84,10 @@ function dst {
         $i = 0
         foreach($item in $global:lastFilteredStacks) {
             Write-Host "[$i] StackName: $($item[0])"
+            _SetCfnResourceColor($item[1])
             Write-Host "     StackStatus: $($item[1])"
             $i++
+            Set-Color $default 
         }
 
         Write-Host "`nTo copy a specific stack's name, run: dst <index>"
@@ -116,6 +118,38 @@ function Is-String {
     param($userInput)
     return $userInput -is [string]
 }
+
+
+# if this doesn't work we might need the $global: prefixing all of them.
+# define colors
+$red = [System.ConsoleColor]::DarkRed
+$green = [System.ConsoleColor]::Green
+$yellow = [System.ConsoleColor]::Yellow
+$blue = [System.ConsoleColor]::Blue
+$orange = [System.ConsoleColor]::DarkYellow
+$default = [System.ConsoleColor]::White
+
+# AWS helpers
+function _SetCfnResourceColor {
+    param([string]$resourceStatus)
+    # Set color based on resourceStatus
+    switch( $resourceStatus){
+        "ROLLBACK_COMPLETE" { Set-Color $red }
+        "ROLLBACK_FAILED" { Set-Color $red }
+        "CREATE_COMPLETE" { Set-Color $green }
+        "UPDATE_COMPLETE" { Set-Color $green }
+        "CREATE_IN_PROGRESS" { Set-Color $yellow }
+        "UPDATE_IN_PROGRESS" { Set-Color $yellow }
+        "DELETE_COMPLETE" { Set-Color $green }
+        "DELETE_IN_PROGRESS" { Set-Color $yellow }
+        "ROLLBACK_IN_PROGRESS" { Set-Color $yellow }
+        "CREATE_FAILED" { Set-Color $red }
+        "REVIEW_IN_PROGRESS" { Set-Color $orange }
+        default { Set-Color $default }
+    }    
+}
+
+
 
 
 
