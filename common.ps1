@@ -74,7 +74,9 @@ function gbh {
     git rev-parse --short HEAD | Set-Clipboard
 }
 
-
+function gpb {
+    git switch -
+}
 function gnb {
     # get name of the current branch
     $currentBranch = git rev-parse --abbrev-ref HEAD
