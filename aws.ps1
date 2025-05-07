@@ -64,6 +64,7 @@ function dst {
     if (Is-Integer($userInput)) {
         # pull from the global!
         # extract the stack name and status
+        $index = $userInput
         $selectedStack = $global:lastFilteredStacks[$index]
         $stackName = $selectedStack[0]
         $stackStatus = $selectedStack[1]
