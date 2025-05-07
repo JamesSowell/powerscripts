@@ -62,11 +62,11 @@ function dstackevent {
     )
 
     # define colors
-    $red = [System.ConsoleColor]::Red
+    $red = [System.ConsoleColor]::DarkRed
     $green = [System.ConsoleColor]::Green
     $yellow = [System.ConsoleColor]::Yellow
     $blue = [System.ConsoleColor]::Blue
-    $orange = [System.ConsoleColor]::Orange
+    $orange = [System.ConsoleColor]::DarkYellow
     $default = [System.ConsoleColor]::White
 
     # Get stack events
@@ -82,10 +82,10 @@ function dstackevent {
     # iterate through events and print with color
     foreach ($event in $events.StackEvents) {
         $resourceStatus = $event.ResourceStatus
-        $resouceType = $event.ResourceType
+        $resourceType = $event.ResourceType
 
         # Set color based on resourceStatus
-        switch( $resource){
+        switch( $resourceStatus){
             "ROLLBACK_COMPLETE" { Set-Color $red }
             "ROLLBACK_FAILED" { Set-Color $red }
             "CREATE_COMPLETE" { Set-Color $green }
@@ -106,7 +106,7 @@ function dstackevent {
 
         # set color for resourceType
         Set-Color $blue
-        Write-Host "ResouceType: $resourceType"
+        Write-Host "ResourceType: $resourceType"
 
         # reset color to deault
         Set-Color $default
