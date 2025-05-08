@@ -139,7 +139,8 @@ function dste {
             Mandatory = $false,        # Don't prompt for missing input
             ValueFromPipeline = $true  # Accept input from the pipeline
         )]
-        [string]$stackName             # Bind to a string
+        [string]$stackName,             # Bind to a string
+        [switch]$a
     )
 
     process {
@@ -155,12 +156,16 @@ function dste {
             "UPDATE_ROLLBACK_FAILED"
         )
 
-        $lastFailedIdx = $events.Count - 1
-        for($i = 0; $i -lt $events.Count; $i++) {
-            if ($events[$i].ResourceStatus -in $failedStates) {
-                $lastFailedIdx = $i
-                Write-Debug "failed value at $lastFailedIdx"
-            }
+        Write-Debug "there are $events.Count"
+        $lastFailedIdx = $events.Count - 1       
+
+        if (-not $a) {
+v
+            for($i = 0; $i -lt $events.Count; $i++) {
+                if ($events[$i].ResourceStatus -in $failedStates) {
+                    $lastFailedIdx = $i
+                    Write-Debug "failed value at $lastFailedIdx"
+                }
         }
 
 
@@ -189,6 +194,9 @@ function dste {
 
         # Reset color to default at the end
         Set-Color $default
+
+        Write-Debug "we printed $events[0..$lastFailedIdx].Count values"
+
     }
 }
 
