@@ -122,58 +122,47 @@ function _SetCfnResourceColor {
 # you could pipe `dst 2` -> stackName and let this be the piped input
 # into this! so that way yuo could write out your whole thing at once!
 function dste {
-
-    # TODO: gonna use this to allow parameter to be FED in as a piped input! optionally
-    # [CmdletBinding()]
-    # param(
-    #     [Parameter(
-    #         Position = 0,
-    #         Mandatory = $false,
-    #         ValueFromPipeline = $true
-    #     )]
-    #     [string]$stackName
-    # )
-
+    [CmdletBinding()]
     param(
-        [string]$stackName
+        [Parameter(
+            Position = 0,              # Accepts unnamed args in this order
+            Mandatory = $false,        # Don't prompt for missing input
+            ValueFromPipeline = $true  # Accept input from the pipeline
+        )]
+        [string]$stackName             # Bind to a string
     )
 
-    # Get stack events
-    $events = aws cloudformation describe-stack-events --stack-name $stackName | ConvertFrom-Json
-    # Function to set color
-    function Set-Color {
-        param(
-            [System.ConsoleColor]$color
-        )
-        [System.Console]::ForegroundColor = $color
-    }
+    process {
+        # Get stack events
+        $events = aws cloudformation describe-stack-events --stack-name $stackName | ConvertFrom-Json
 
-    # iterate through events and print with color
-    foreach ($event in $events.StackEvents) {
-        $resourceStatus = $event.ResourceStatus
-        $resourceType = $event.ResourceType
+        # iterate through events and print with color
+        foreach ($event in $events.StackEvents) {
+            $resourceStatus = $event.ResourceStatus
+            $resourceType = $event.ResourceType
 
-        # Set color based on resourceStatus
-        _SetCfnResourceColor($resourceStatus)
+            # Set color based on resourceStatus
+            _SetCfnResourceColor($resourceStatus)
 
 
-        # print ResoruceStatus
-        Write-Host "ResouceStatus: $resourceStatus"
+            # print ResoruceStatus
+            Write-Host "ResouceStatus: $resourceStatus"
 
-        # set color for resourceType
-        Set-Color $blue
-        Write-Host "ResourceType: $resourceType"
+            # set color for resourceType
+            Set-Color $blue
+            Write-Host "ResourceType: $resourceType"
 
-        # reset color to deault
+            # reset color to deault
+            Set-Color $default
+            Write-Host "Timestamp: $($event.Timestamp)"
+            Write-Host "LogicalResourceId: $($event.LogicalResourceId)"
+            Write-Host "PhysicalResourceId: $($event.PhysicalResourceId)"
+            Write-Host "---------------------------------------------"
+        }
+
+        # Reset color to default at the end
         Set-Color $default
-        Write-Host "Timestamp: $($event.Timestamp)"
-        Write-Host "LogicalResourceId: $($event.LogicalResourceId)"
-        Write-Host "PhysicalResourceId: $($event.PhysicalResourceId)"
-        Write-Host "---------------------------------------------"
     }
-
-    # Reset color to default at the end
-    Set-Color $default
 }
 
 function dublogin {
