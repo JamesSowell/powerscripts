@@ -29,7 +29,8 @@ function dst {
 
         
         # use this output to pipe with other functions that want the CFN stack name!
-        return $stackName
+        # use Write-Output as idiomatically works better for PIPEline instaed of traditional 'return'
+        Write-Output $stackName
     } elseif (Is-String($userInput)) {
         # returns raw JSON string, need to store this into a PS object!
         $global:lastFilteredStacks = aws cloudformation list-stacks `
@@ -121,6 +122,18 @@ function _SetCfnResourceColor {
 # you could pipe `dst 2` -> stackName and let this be the piped input
 # into this! so that way yuo could write out your whole thing at once!
 function dste {
+
+    # TODO: gonna use this to allow parameter to be FED in as a piped input! optionally
+    # [CmdletBinding()]
+    # param(
+    #     [Parameter(
+    #         Position = 0,
+    #         Mandatory = $false,
+    #         ValueFromPipeline = $true
+    #     )]
+    #     [string]$stackName
+    # )
+
     param(
         [string]$stackName
     )
