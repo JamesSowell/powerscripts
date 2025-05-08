@@ -147,7 +147,7 @@ function dste {
         # Get stack events
         $events = aws cloudformation describe-stack-events --stack-name $stackName | ConvertFrom-Json
 
-        Write-Debug "events: $($events)"
+        Write-Debug $events
 
         # just get the events
         $events = $events.StackEvents
