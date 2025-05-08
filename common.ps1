@@ -60,8 +60,15 @@ function nomodules {
 
 Set-Alias g git
 
+
+
 function glo {
     git log --oneline -n 15
+}
+
+
+function gs {
+    git switch -
 }
 
 function gb {
