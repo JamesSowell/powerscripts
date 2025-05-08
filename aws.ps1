@@ -160,7 +160,6 @@ function dste {
         $lastFailedIdx = $events.Count - 1       
 
         if (-not $a) {
-v
             for($i = 0; $i -lt $events.Count; $i++) {
                 if ($events[$i].ResourceStatus -in $failedStates) {
                     $lastFailedIdx = $i
