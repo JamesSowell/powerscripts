@@ -7,8 +7,11 @@ function trailRole {
 # jq '.[0:20]' gets the first 20 elements! if empty then all!
 
 function dst {
+    [CmdletBinding()]
     param (
-        [string]$userInput
+        [Parameter(Position = 0, ValueFromPipeline = $true)]
+        [string]$userInput,
+        [switch]$failed
     )
     
     # if given a number, then pull from the persisted values....
@@ -32,9 +35,15 @@ function dst {
         # use Write-Output as idiomatically works better for PIPEline instaed of traditional 'return'
         Write-Output $stackName
     } elseif (Is-String($userInput)) {
+        $query = aws cloudformation list-stacks `
+        --query "StackSummaries[?contains(StackName,'$userInput')].[StackName, StackStatus]" 
+        if ($failed){
+            $query += " && (StackStatus == 'ROLLBACK_FAILED' || StackStatus == 'CREATE_FAILED' || StackStatus == 'DELETE_FAILED' || StackStatus == 'UPDATE_ROLLBACK_FAILED')"
+        }
+        $query += ".[StackName, StackStatus]"
         # returns raw JSON string, need to store this into a PS object!
         $global:lastFilteredStacks = aws cloudformation list-stacks `
-        --query "StackSummaries[?contains(StackName,'$userInput')].[StackName, StackStatus]" `
+        --query $query `
         --output json | ConvertFrom-Json
         # perform jq on the response such that we can see it better
         $i = 0
