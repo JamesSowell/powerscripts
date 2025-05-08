@@ -3,6 +3,9 @@ function trailRole {
 
 }
 
+# todo notes:
+# jq '.[0:20]' gets the first 20 elements! if empty then all!
+
 function dst {
     param (
         [string]$userInput
