@@ -23,6 +23,10 @@ function dst {
         # output the stack name and status
         Write-Host "Stack Name: $stackName"
         Write-Host "Stack Status: $stackStatus"
+
+        
+        # use this output to pipe with other functions that want the CFN stack name!
+        return $stackName
     } elseif (Is-String($userInput)) {
         # returns raw JSON string, need to store this into a PS object!
         $global:lastFilteredStacks = aws cloudformation list-stacks `
@@ -39,6 +43,7 @@ function dst {
         }
 
         Write-Host "`nTo copy a specific stack's name, run: dst <index>"
+        
     } else {
         Write-Error "not a valid input!"
     }
@@ -109,8 +114,10 @@ function _SetCfnResourceColor {
 
 
 
-
-function dstackevent {
+# it would be cool if since it takes exactly one paramer
+# you could pipe `dst 2` -> stackName and let this be the piped input
+# into this! so that way yuo could write out your whole thing at once!
+function dste {
     param(
         [string]$stackName
     )
