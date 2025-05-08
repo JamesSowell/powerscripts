@@ -165,6 +165,7 @@ function dste {
                     $lastFailedIdx = $i
                     Write-Debug "failed value at $lastFailedIdx"
                 }
+            }
         }
 
 
