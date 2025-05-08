@@ -145,15 +145,32 @@ function dste {
     process {
         # Get stack events
         $events = aws cloudformation describe-stack-events --stack-name $stackName | ConvertFrom-Json
+        # just get the events
+        $events = $events.StackEvents
+
+        $failedStates = @(
+            "ROLLBACK_FAILED",
+            "CREATE_FAILED",
+            "DELETE_FAILED",
+            "UPDATE_ROLLBACK_FAILED"
+        )
+
+        $lastFailedIdx = $events.Count - 1
+        for($i = 0; $i -lt $events.Count; $i++) {
+            if ($events[$i].ResourceStatus -in $failedStates) {
+                $lastFailedIdx = $i
+                Write-Debug "failed value at $lastFailedIdx"
+            }
+        }
+
 
         # iterate through events and print with color
-        foreach ($event in $events.StackEvents) {
-            $resourceStatus = $event.ResourceStatus
-            $resourceType = $event.ResourceType
+        $events[0..$lastFailedIdx] | ForEach-Object {
+            $resourceStatus = $_.ResourceStatus
+            $resourceType = $_.ResourceType
 
             # Set color based on resourceStatus
             _SetCfnResourceColor($resourceStatus)
-
 
             # print ResoruceStatus
             Write-Host "ResouceStatus: $resourceStatus"
@@ -164,9 +181,9 @@ function dste {
 
             # reset color to deault
             Set-Color $default
-            Write-Host "Timestamp: $($event.Timestamp)"
-            Write-Host "LogicalResourceId: $($event.LogicalResourceId)"
-            Write-Host "PhysicalResourceId: $($event.PhysicalResourceId)"
+            Write-Host "Timestamp: $($_.Timestamp)"
+            Write-Host "LogicalResourceId: $($_.LogicalResourceId)"
+            Write-Host "PhysicalResourceId: $($_.PhysicalResourceId)"
             Write-Host "---------------------------------------------"
         }
 
