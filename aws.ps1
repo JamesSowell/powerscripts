@@ -146,8 +146,12 @@ function dste {
     process {
         # Get stack events
         $events = aws cloudformation describe-stack-events --stack-name $stackName | ConvertFrom-Json
+
+        Write-Debug "events: $($events)"
+
         # just get the events
         $events = $events.StackEvents
+
 
         $failedStates = @(
             "ROLLBACK_FAILED",
@@ -156,8 +160,7 @@ function dste {
             "UPDATE_ROLLBACK_FAILED"
         )
 
-        Write-Debug "there are $events.Count"
-        $lastFailedIdx = $events.Count - 1       
+        $lastFailedIdx = $events.Count - 1
 
         if (-not $a) {
             for($i = 0; $i -lt $events.Count; $i++) {
@@ -195,7 +198,7 @@ function dste {
         # Reset color to default at the end
         Set-Color $default
 
-        Write-Debug "we printed $events[0..$lastFailedIdx].Count values"
+        Write-Debug "we printed $($lastFailedIdx + 1) values"
 
     }
 }
