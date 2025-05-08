@@ -166,6 +166,7 @@ function dste {
             for($i = 0; $i -lt $events.Count; $i++) {
                 if ($events[$i].ResourceStatus -in $failedStates) {
                     $lastFailedIdx = $i
+                    # isnt printing forsome reason
                     Write-Debug "failed value at $lastFailedIdx"
                 }
             }
