@@ -123,5 +123,13 @@ function obs {
 
 
 
-# 
+# JQ testing code 
 # curl.exe -s https://api.github.com/repos/jqlang/jq | jq '{ yessith: .owner.login, noith: .network_count } '
+
+
+# to practice curl on certain APIS that may require bearer token
+# curl.exe -s -X POST https://api.example.com/endpoint `
+#   -H "Authorization: Bearer $TOKEN" `
+#   -H "Content-Type: application/json" `
+#   --data-raw '{"name":"James"}' `
+#   -w "\nHTTP Status: %{http_code}\n"
