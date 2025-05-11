@@ -205,7 +205,7 @@ function dste {
 }
 
 # validate templates that may exist as a child from this path directory
-function Validate-AllTemplates {
+function dvt {
     param (
         [string]$StartPath = (Get-Location)
     )
