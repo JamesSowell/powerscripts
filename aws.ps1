@@ -204,6 +204,30 @@ function dste {
     }
 }
 
+# validate templates that may exist as a child from this path directory
+function Validate-AllTemplates {
+    param (
+        [string]$StartPath = (Get-Location)
+    )
+
+    Get-ChildItem -Path $StartPath -Recurse -Filter *.template.yml | ForEach-Object {
+        $filePath = $_.FullName
+        Write-Host "🔍 Validating $filePath..."
+
+        try {
+            $result = aws cloudformation validate-template --template-body file://$filePath | ConvertFrom-Json
+            Write-Host "✅ Valid: $($result.Description)" -ForegroundColor Green
+        } catch {
+            Write-Host "❌ Error validating $filePath" -ForegroundColor Red
+            Write-Host $_.Exception.Message -ForegroundColor DarkRed
+        }
+
+        Write-Host "`n" # Blank line for readability
+    }
+}
+
+
+
 function dublogin {
     aws-sso-util login
 }

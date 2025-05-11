@@ -123,4 +123,5 @@ function obs {
 
 
 
-
+# 
+# curl.exe -s https://api.github.com/repos/jqlang/jq | jq '{ yessith: .owner.login, noith: .network_count } '
