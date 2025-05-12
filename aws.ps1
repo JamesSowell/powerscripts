@@ -205,27 +205,27 @@ function dste {
 }
 
 # validate templates that may exist as a child from this path directory
-function dvt {
-    param (
-        [string]$StartPath = (Get-Location)
-    )
+# function dvt {
+#     param (
+#         [string]$StartPath = (Get-Location)
+#     )
 
-    Get-ChildItem -Path $StartPath -Recurse -Filter *.template.yml | ForEach-Object {
-        $filePath = $_.FullName
-        Write-Host "🔍 Validating $filePath..."
+#     Get-ChildItem -Path $StartPath -Recurse -Filter *.template.yml | ForEach-Object {
+#         $filePath = $_.FullName
+#         Write-Host "🔍 Validating $filePath..."
 
-        try {
-            $result = aws cloudformation validate-template --template-body file://$filePath | ConvertFrom-Json
-            Write-Host "✅ Valid: $($result.Description)" -ForegroundColor Green
-        } catch {
-            Write-Host "❌ Error validating $filePath" -ForegroundColor Red
-            Write-Host $_.Exception.Message -ForegroundColor DarkRed
-        }
+#         try {
+#             $result = aws cloudformation validate-template --template-body file://$filePath | ConvertFrom-Json
+#             Write-Host "✅ Valid: $($result.Description)" -ForegroundColor Green
+#         } catch {
+#             Write-Host "❌ Error validating $filePath" -ForegroundColor Red
+#             Write-Host $_.Exception.Message -ForegroundColor DarkRed
+#         }
 
-        # issue here for some reason.
-        Write-Host "" # Blank line for readability
-    }
-}
+#         # issue here for some reason.
+#         Write-Host "" # Blank line for readability
+#     }
+# }
 
 
 
