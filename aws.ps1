@@ -223,7 +223,7 @@ function dvt {
         }
 
         # issue here for some reason.
-        # Write-Host "`n" # Blank line for readability
+        Write-Host "" # Blank line for readability
     }
 }
 
