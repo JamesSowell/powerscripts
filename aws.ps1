@@ -222,7 +222,8 @@ function dvt {
             Write-Host $_.Exception.Message -ForegroundColor DarkRed
         }
 
-        Write-Host "`n" # Blank line for readability
+        # issue here for some reason.
+        # Write-Host "`n" # Blank line for readability
     }
 }
 
