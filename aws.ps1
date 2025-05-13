@@ -1,7 +1,6 @@
 
-function trailRole {
 
-}
+
 
 # todo notes:
 # jq '.[0:20]' gets the first 20 elements! if empty then all!
@@ -62,71 +61,6 @@ function dst {
     
 
 }
-
-
-
-
-# Helper functions
-function Is-Integer {
-    param([string]$userInput)
-
-    [int]$tmp = 0
-    return [int]::TryParse($userInput, [ref]$tmp)
-}
-
-function Is-Natural {
-    param($number)
-    return Is-Integer($number) -and $number -ge 0
-}
-
-function Is-String {
-    param($userInput)
-    return $userInput -is [string]
-}
-
-
-# if this doesn't work we might need the $global: prefixing all of them.
-# define colors
-$green = [System.ConsoleColor]::Green
-$red = [System.ConsoleColor]::DarkRed
-$yellow = [System.ConsoleColor]::Yellow
-$blue = [System.ConsoleColor]::Blue
-$orange = [System.ConsoleColor]::DarkYellow
-$default = [System.ConsoleColor]::White
-# Function to set color
-function Set-Color {
-    param(
-        [System.ConsoleColor]$color
-    )
-    [System.Console]::ForegroundColor = $color
-}
-
-# AWS helpers
-function _SetCfnResourceColor {
-    param([string]$resourceStatus)
-    # Set color based on resourceStatus
-    switch( $resourceStatus){
-        "ROLLBACK_COMPLETE" { Set-Color $red }
-        "ROLLBACK_FAILED" { Set-Color $red }
-        "UPDATE_ROLLBACK_FAILED" { Set-Color $red }
-        "CREATE_FAILED" { Set-Color $red }
-        "DELETE_FAILED" { Set-Color $red }
-        "CREATE_COMPLETE" { Set-Color $green }
-        "UPDATE_COMPLETE" { Set-Color $green }
-        "CREATE_IN_PROGRESS" { Set-Color $yellow }
-        "UPDATE_IN_PROGRESS" { Set-Color $yellow }
-        "DELETE_COMPLETE" { Set-Color $green }
-        "DELETE_IN_PROGRESS" { Set-Color $yellow }
-        "ROLLBACK_IN_PROGRESS" { Set-Color $yellow }
-        "CREATE_FAILED" { Set-Color $red }
-        "REVIEW_IN_PROGRESS" { Set-Color $orange }
-        default { Set-Color $default }
-    }    
-}
-
-
-
-
 
 # it would be cool if since it takes exactly one paramer
 # you could pipe `dst 2` -> stackName and let this be the piped input
@@ -203,6 +137,128 @@ function dste {
 
     }
 }
+
+function dservices {
+    param([string]$query)
+
+    $awsHelp = aws help | Out-String
+    $lines = $awsHelp -split "`n"
+
+    $inSection = $false
+    $rawServices = @()
+
+    foreach($line in $lines) {
+        if ($line -match 'AVAILABLE SERVICES') {
+            $inSection = $true
+        } elseif ($line -match "SEE ALSO") {
+            break
+        } elseif ($inSection) {
+            $rawServices += $line
+        }
+    }
+
+    # join all lines and split on '*'
+    $services = ($rawServices -join " ") -split '\*' | ForEach-Object {
+        $_.Trim()
+    } | Where-Object { $_ -ne "" }
+
+    $services | Where-Object { $_ -like "*$query*" } ForEach-Object {
+        Write-Host $_
+    }
+}
+
+
+# slap the ARN that you most care about here and debug away!
+function trail {
+    [CmdletBinding]
+    param(
+        [Parameter(
+            Position = 0,              # Accepts unnamed args in this order
+            Mandatory = $false,        # Don't prompt for missing input
+            ValueFromPipeline = $true  # Accept input from the pipeline
+        )]
+        [string]$userInput,
+        [switch]$s                     # indicates that we're looking at 'service' 
+        [switch]$timeAgo,              # 
+        [int]$n = 10
+    )
+
+    $events = aws cloudtrail look-up events --lookup-attributes AttributeKey=ResourceName,AttributeValue=$arn --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson'
+    # pretty print or additional filtering
+    $events | ForEach-Object {
+        # 
+    }
+}
+
+# for trailing an event, like from the osis service or lambda, probably need to add some 
+# FUZZY filtering for the service that you are likely debugging.
+function trailservice {}
+
+
+
+# Helper functions
+function Is-Integer {
+    param([string]$userInput)
+
+    [int]$tmp = 0
+    return [int]::TryParse($userInput, [ref]$tmp)
+}
+
+function Is-Natural {
+    param($number)
+    return Is-Integer($number) -and $number -ge 0
+}
+
+function Is-String {
+    param($userInput)
+    return $userInput -is [string]
+}
+
+
+# if this doesn't work we might need the $global: prefixing all of them.
+# define colors
+$green = [System.ConsoleColor]::Green
+$red = [System.ConsoleColor]::DarkRed
+$yellow = [System.ConsoleColor]::Yellow
+$blue = [System.ConsoleColor]::Blue
+$orange = [System.ConsoleColor]::DarkYellow
+$default = [System.ConsoleColor]::White
+# Function to set color
+function Set-Color {
+    param(
+        [System.ConsoleColor]$color
+    )
+    [System.Console]::ForegroundColor = $color
+}
+
+# AWS helpers
+function _SetCfnResourceColor {
+    param([string]$resourceStatus)
+    # Set color based on resourceStatus
+    switch( $resourceStatus){
+        "ROLLBACK_COMPLETE" { Set-Color $red }
+        "ROLLBACK_FAILED" { Set-Color $red }
+        "UPDATE_ROLLBACK_FAILED" { Set-Color $red }
+        "CREATE_FAILED" { Set-Color $red }
+        "DELETE_FAILED" { Set-Color $red }
+        "CREATE_COMPLETE" { Set-Color $green }
+        "UPDATE_COMPLETE" { Set-Color $green }
+        "CREATE_IN_PROGRESS" { Set-Color $yellow }
+        "UPDATE_IN_PROGRESS" { Set-Color $yellow }
+        "DELETE_COMPLETE" { Set-Color $green }
+        "DELETE_IN_PROGRESS" { Set-Color $yellow }
+        "ROLLBACK_IN_PROGRESS" { Set-Color $yellow }
+        "CREATE_FAILED" { Set-Color $red }
+        "REVIEW_IN_PROGRESS" { Set-Color $orange }
+        default { Set-Color $default }
+    }    
+}
+
+
+
+
+
+
 
 # validate templates that may exist as a child from this path directory
 # function dvt {
