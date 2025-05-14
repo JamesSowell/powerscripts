@@ -170,23 +170,26 @@ function dservices {
 
 # slap the ARN that you most care about here and debug away!
 function trail {
-    [CmdletBinding]
+    [CmdletBinding()]
     param(
         [Parameter(
             Position = 0,              # Accepts unnamed args in this order
             Mandatory = $false,        # Don't prompt for missing input
             ValueFromPipeline = $true  # Accept input from the pipeline
         )]
-        [string]$userInput,
-        [switch]$s                     # indicates that we're looking at 'service' 
-        [switch]$timeAgo,              # 
-        [int]$n = 10
+        [string]$userInput,           
+        [switch]$s,                    # indicates that we're looking at 'service'
+        [swicth]$d,                    # indicates that we will go 'timeago' in days as opposed to minutes 
+        [int]$timeAgo,                 # use to filter through logs given a time period.
+        [int]$n = 10                   # maxResults
     )
+
+    # by default we will 
 
     $events = aws cloudtrail look-up events --lookup-attributes AttributeKey=ResourceName,AttributeValue=$arn --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson'
     # pretty print or additional filtering
     $events | ForEach-Object {
-        # 
+        # add stff here later
     }
 }
 
