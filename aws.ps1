@@ -164,7 +164,7 @@ function dstd {
         # use Write-Output as idiomatically works better for PIPEline instaed of traditional 'return'
         Write-Output $selectedStackOutput[0]
     } elseif (Is-String($userInput)) {
-        $query = "Stacks[0].Outputs[*].{key:OutputKey,value:OutputValue}" 
+        $query = "Stacks[0].Outputs[*].[OutputKey,OutputValue]" 
         # returns raw JSON string, need to store this into a PS object!
         $global:lastStackOutputs = aws cloudformation describe-stacks `
         --stack-name $userInput `
