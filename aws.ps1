@@ -241,7 +241,7 @@ function trail {
         $timeAgo *= 1440
     }
 
-    $events = aws cloudtrail look-up events `
+    $events = aws cloudtrail lookup-events `
     --start-time ((Get-Date).AddMinutes(-$timeAgo).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
     --end-time ((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
     --lookup-attributes AttributeKey=$resourceKey,AttributeValue=$userInput `
