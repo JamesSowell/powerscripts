@@ -168,7 +168,7 @@ function dstd {
         # returns raw JSON string, need to store this into a PS object!
         $global:lastStackOutputs = aws cloudformation describe-stacks `
         --query $query `
-        --output json | ConvertFrom-Json `
+        --output json | jq '.[] | [.key, .value]' | ConvertFrom-Json
         # perform jq on the response such that we can see it better
         $i = 0
         foreach($item in $global:lastStackOutputs) {
