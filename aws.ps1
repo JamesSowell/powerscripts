@@ -162,7 +162,7 @@ function dstd {
         
         # use this output to pipe with other functions that want the CFN stack name!
         # use Write-Output as idiomatically works better for PIPEline instaed of traditional 'return'
-        Write-Output $selectedStackOutput[0]
+        Write-Output $selectedStackOutput[1]
     } elseif (Is-String($userInput)) {
         $query = "Stacks[0].Outputs[*].[OutputKey,OutputValue]" 
         # returns raw JSON string, need to store this into a PS object!
