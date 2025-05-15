@@ -227,7 +227,7 @@ function trail {
         [string]$userInput,           
         # may need to change this $s to account for 'AccessKeyId' to see what ResourceName assumer did! (supposedly)
         [switch]$s = $false,                    # indicates that we're looking at 'service'
-        [swicth]$d = $false,                    # indicates that we will go 'timeago' in days as opposed to minutes 
+        [switch]$d = $false,                    # indicates that we will go 'timeago' in days as opposed to minutes 
         [int]$timeAgo = 30,                 # use to filter through logs given a time period.
         [int]$n = 10                   # maxResults
     )
