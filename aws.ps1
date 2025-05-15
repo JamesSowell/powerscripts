@@ -178,18 +178,32 @@ function trail {
             ValueFromPipeline = $true  # Accept input from the pipeline
         )]
         [string]$userInput,           
-        [switch]$s,                    # indicates that we're looking at 'service'
-        [swicth]$d,                    # indicates that we will go 'timeago' in days as opposed to minutes 
-        [int]$timeAgo,                 # use to filter through logs given a time period.
+        # may need to change this $s to account for 'AccessKeyId' to see what ResourceName assumer did! (supposedly)
+        [switch]$s = $false,                    # indicates that we're looking at 'service'
+        [swicth]$d = $false,                    # indicates that we will go 'timeago' in days as opposed to minutes 
+        [int]$timeAgo = 30,                 # use to filter through logs given a time period.
         [int]$n = 10                   # maxResults
     )
 
     # by default we will 
 
-    $events = aws cloudtrail look-up events --lookup-attributes AttributeKey=ResourceName,AttributeValue=$arn --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson'
+    # Resources will likely be used more. so we'll have this be false by default
+    $resourceKey = if(-not $s) {"ResourceName" } else { "EventName" }
+    $timeModifierString = if($d) { "AddDays" } else { "AddMinutes" }
+
+    $events = aws cloudtrail look-up events `
+    --start-time ((Get-Date).$timeModifierString(-$timeAgo).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
+    --end-time ((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
+    --lookup-attributes AttributeKey=$resourceKey,AttributeValue=$userInput `
+    --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson'
+
+
     # pretty print or additional filtering
     $events | ForEach-Object {
         # add stff here later
+        Write-Host "----------------"
+        Write-Host $events
+        Write-Host "----------------"
     }
 }
 
