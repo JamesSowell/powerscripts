@@ -138,6 +138,53 @@ function dste {
     }
 }
 
+
+# primary use for EXTRACTING Arns from the outputs will function 
+# similarly to quickly clipboard your pretty output to your clipboard.
+function dstd {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, ValueFromPipeline = $true)]
+        [string]$userInput
+    )
+    
+    # if given a number, then pull from the persisted values....
+    if (Is-Integer($userInput) -and $userInput -lt $global:lastStackOutputs.Count) {
+        # pull from the global!
+        $index = $userInput
+        $selectedStackOutput = $global:lastStackOutputs[$index]
+
+        # copy the stack name to clipboard
+        $selectedStackOutput[1] | Set-Clipboard
+
+        # output the stack name and status
+        Write-Host "Stack Output '$($selectedStackOutput[0])' copied to clipboard!"
+        
+        # use this output to pipe with other functions that want the CFN stack name!
+        # use Write-Output as idiomatically works better for PIPEline instaed of traditional 'return'
+        Write-Output $selectedStackOutput[0]
+    } elseif (Is-String($userInput)) {
+        $query = "Stacks[0].Outputs[*].{key:OutputKey,value:OutputValue}" 
+        # returns raw JSON string, need to store this into a PS object!
+        $global:lastStackOutputs = aws cloudformation describe-stacks `
+        --query $query `
+        --output json | ConvertFrom-Json `
+        # perform jq on the response such that we can see it better
+        $i = 0
+        foreach($item in $global:lastFilteredStacks) {
+            Write-Host "[$i] StackName: $($item[0])"
+            _SetCfnResourceColor($item[1])
+            Write-Host "     StackStatus: $($item[1])"
+            $i++
+            Set-Color $global:default 
+        }
+
+        Write-Host "`nTo copy a specific stack's output value, run: dstd <index>"        
+    } else {
+        Write-Error "not a valid input!"
+    }     
+}
+
 function dservices {
     param([string]$query)
 
@@ -262,6 +309,7 @@ function _SetCfnResourceColor {
         "UPDATE_COMPLETE" { Set-Color $green }
         "CREATE_IN_PROGRESS" { Set-Color $yellow }
         "UPDATE_IN_PROGRESS" { Set-Color $yellow }
+        "UPDATE_ROLLBACK_IN_PROGRESS" { Set-Color $yellow }
         "DELETE_COMPLETE" { Set-Color $green }
         "DELETE_IN_PROGRESS" { Set-Color $yellow }
         "ROLLBACK_IN_PROGRESS" { Set-Color $yellow }
