@@ -251,7 +251,9 @@ function trail {
     --start-time ((Get-Date).AddMinutes(-$timeAgo).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
     --lookup-attributes AttributeKey=$resourceKey,AttributeValue=$userInput `
     --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson `
-    del(.event)' 
+    del(.eventVersion, .managementEvent, .recipientAccountId, .sharedEventID)'
+    
+    # TODO: figure out how to convert root level json of .eventTime from zulu into local time string.
 }
 
 # for trailing an event, like from the osis service or lambda, probably need to add some 
