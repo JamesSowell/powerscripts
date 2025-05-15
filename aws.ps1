@@ -10,7 +10,8 @@ function dst {
     param (
         [Parameter(Position = 0, ValueFromPipeline = $true)]
         [string]$userInput,
-        [switch]$f
+        [switch]$f,
+        [switch]$alive
     )
     
     # if given a number, then pull from the persisted values....
@@ -43,6 +44,10 @@ function dst {
         $global:lastFilteredStacks = aws cloudformation list-stacks `
         --query $query `
         --output json | ConvertFrom-Json
+
+        # store the FIRST stackname in order, updating with the firstmost occurence of each, and keeping that idx. 
+        $hashMap = @{}
+
         # perform jq on the response such that we can see it better
         $i = 0
         foreach($item in $global:lastFilteredStacks) {
@@ -226,9 +231,10 @@ function trail {
         )]
         [string]$userInput,           
         # may need to change this $s to account for 'AccessKeyId' to see what ResourceName assumer did! (supposedly)
-        [switch]$s = $false,                    # indicates that we're looking at 'service'
-        [switch]$d = $false,                    # indicates that we will go 'timeago' in days as opposed to minutes 
-        [int]$timeAgo = 30,                 # use to filter through logs given a time period.
+        [switch]$s,                    # indicates that we're looking at 'service'
+        [switch]$d,                    # indicates that we will go 'timeago' in days as opposed to minutes 
+        # choosing a day by default, in general will likely use the minutes feature which is why I'm using DAYS as set to false unless switched on!
+        [int]$t = 1440,                 # use to filter through logs given a time period.
         [int]$n = 10                   # maxResults
     )
 
@@ -241,20 +247,11 @@ function trail {
         $timeAgo *= 1440
     }
 
-    $events = aws cloudtrail lookup-events `
+    aws cloudtrail lookup-events `
     --start-time ((Get-Date).AddMinutes(-$timeAgo).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
-    --end-time ((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
     --lookup-attributes AttributeKey=$resourceKey,AttributeValue=$userInput `
-    --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson'
-
-
-    # pretty print or additional filtering
-    $events | ForEach-Object {
-        # add stff here later
-        Write-Host "----------------"
-        Write-Host $events
-        Write-Host "----------------"
-    }
+    --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson `
+    del(.event)' 
 }
 
 # for trailing an event, like from the osis service or lambda, probably need to add some 
