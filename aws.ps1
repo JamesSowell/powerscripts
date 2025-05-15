@@ -250,7 +250,7 @@ function trail {
     aws cloudtrail lookup-events `
     --start-time ((Get-Date).AddMinutes(-$timeAgo).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
     --lookup-attributes AttributeKey=$resourceKey,AttributeValue=$userInput `
-    --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson `
+    --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson | `
     del(.eventVersion, .managementEvent, .recipientAccountId, .sharedEventID)'
     
     # TODO: figure out how to convert root level json of .eventTime from zulu into local time string.
