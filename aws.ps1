@@ -171,14 +171,13 @@ function dstd {
         --output json | ConvertFrom-Json `
         # perform jq on the response such that we can see it better
         $i = 0
-        foreach($item in $global:lastFilteredStacks) {
-            Write-Host "[$i] StackName: $($item[0])"
-            _SetCfnResourceColor($item[1])
-            Write-Host "     StackStatus: $($item[1])"
+        foreach($item in $global:lastStackOutputs) {
+            Write-Host "[$i] key: $($item[0])"
+            Set-Color $darkGreen
+            Write-Host "     value: $($item[1])"
             $i++
             Set-Color $global:default 
         }
-
         Write-Host "`nTo copy a specific stack's output value, run: dstd <index>"        
     } else {
         Write-Error "not a valid input!"
@@ -282,6 +281,7 @@ function Is-String {
 # if this doesn't work we might need the $global: prefixing all of them.
 # define colors
 $green = [System.ConsoleColor]::Green
+$darkGreen = [System.ConsoleColor]::DarkGreen
 $red = [System.ConsoleColor]::DarkRed
 $yellow = [System.ConsoleColor]::Yellow
 $blue = [System.ConsoleColor]::Blue
