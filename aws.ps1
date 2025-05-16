@@ -245,14 +245,14 @@ function trail {
 
     # Resources will likely be used more. so we'll have this be false by default
     $resourceKey = if(-not $s) {"ResourceName" } else { "EventName" }
-    if ($d) {
-        # multiply by 
-        $timeAgo *= 1440
+    if ($d -and $t -ne 1440) {
+        # user assumes days and will provide a then
+        $t *= 1440
     }
 
     $jqString = '.Events[] | .CloudTrailEvent | fromjson | del(.eventVersion, .managementEvent, .recipientAccountId, .sharedEventID)'
     aws cloudtrail lookup-events `
-    --start-time ((Get-Date).AddMinutes(-$timeAgo).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
+    --start-time ((Get-Date).AddMinutes(-$t).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
     --lookup-attributes AttributeKey=$resourceKey,AttributeValue=$userInput `
     --max-results $n | jq $jqString
     
