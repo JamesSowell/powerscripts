@@ -48,6 +48,9 @@ function dst {
         # store the FIRST stackname in order, updating with the firstmost occurence of each, and keeping that idx. 
         $hashMap = @{}
 
+        # possibly use this as a query instaed of the hashmap altogether!
+        # 'aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE'
+
         # perform jq on the response such that we can see it better
         $i = 0
         foreach($item in $global:lastFilteredStacks) {
@@ -247,11 +250,11 @@ function trail {
         $timeAgo *= 1440
     }
 
+    $jqString = '.Events[] | .CloudTrailEvent | fromjson | del(.eventVersion, .managementEvent, .recipientAccountId, .sharedEventID)'
     aws cloudtrail lookup-events `
     --start-time ((Get-Date).AddMinutes(-$timeAgo).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")) `
     --lookup-attributes AttributeKey=$resourceKey,AttributeValue=$userInput `
-    --max-results $n | jq '.Events[] | .CloudTrailEvent | fromjson | `
-    del(.eventVersion, .managementEvent, .recipientAccountId, .sharedEventID)'
+    --max-results $n | jq $jqString
     
     # TODO: figure out how to convert root level json of .eventTime from zulu into local time string.
 }
