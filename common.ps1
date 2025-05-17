@@ -1,10 +1,11 @@
 
 # Alises
 Set-Alias vim nvim
-Set-Alias ll ls
+Set-Alias en jq
+Set-Alias x z
+Set-Alias nn ls
 Set-Alias cs clear
 Set-Alias grep findstr
-Set-Alias -Name rl -Value Invoke-History
 
 function la {
     Get-ChildItem -Force
@@ -106,7 +107,6 @@ function gnb {
     # Switch to the next branch
     git switch $branches[$nextIndex]
 }
-
 
 
 
