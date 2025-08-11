@@ -40,7 +40,7 @@ function ccat {
 }
 
 function nt {
-    wt -wt 0 nt -d .
+    wt -w 0 nt -d .
 }
 
 function whereis ($command) {
