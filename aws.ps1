@@ -45,11 +45,17 @@ function dst {
         --query $query `
         --output json | ConvertFrom-Json
 
-        # store the FIRST stackname in order, updating with the firstmost occurence of each, and keeping that idx. 
-        $hashMap = @{}
 
+        $statusFilterItems = @()
         # possibly use this as a query instaed of the hashmap altogether!
         # 'aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE UPDATE_COMPLETE'
+        # the above solution sounds cool but we may still have some overlap. 
+        # $uniqueStacks = $stacks.StackSummaries |
+        #     Sort-Object -Property LastUpdatedTime -Descending |
+        #     Group-Object -Property StackName |
+        #     ForEach-Object { $_.Group[0] }
+
+        # $uniqueStacks | Select-Object StackName, StackStatus
 
         # perform jq on the response such that we can see it better
         $i = 0

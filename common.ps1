@@ -39,6 +39,10 @@ function ccat {
     }
 }
 
+function nt {
+    wt -wt 0 nt -d .
+}
+
 function whereis ($command) {
     Get-Command -Name $command -ErrorAction SilentlyContinue | 
     Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
