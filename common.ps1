@@ -52,8 +52,12 @@ function editprofile {
     code $PROFILE
 }
 
-function talonuser {
+function gotalonuser {
     Set-Location $HOME\AppData\Roaming\talon\user
+}
+
+function gomywintalonuser {
+    Set-Location $HOME\AppData\Roaming\talon\user\my-talon
 }
 
 # node
