@@ -127,6 +127,11 @@ function gstashapply {
     git stash apply "stash@{$n}"
 }
 
+function gstash {
+    git stash list
+}
+
+
 
 
 
