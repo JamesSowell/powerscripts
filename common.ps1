@@ -131,7 +131,21 @@ function gstash {
     git stash list
 }
 
+# powershell
+function checkalias {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, Position=0)]
+        [string]$Name
+    )
 
+    $alias = Get-Alias -Name $Name -ErrorAction SilentlyContinue
+    if ($alias) {
+        "Alias '$Name' exists -> $($alias.Definition)" -ForegroundColor Yellow
+    } else {
+        "Alias '$Name' does not exist" -ForegroundColor Green
+    }
+}
 
 
 
