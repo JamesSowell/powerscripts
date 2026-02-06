@@ -117,6 +117,17 @@ function gnb {
 }
 
 
+# stash
+function gstashapply {
+    param(
+        [Parameter(Mandatory=$true)]
+        [int]$n
+    )
+
+    git stash apply "stash@{$n}"
+}
+
+
 
 
 # obsidian
