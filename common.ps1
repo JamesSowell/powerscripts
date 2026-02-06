@@ -141,9 +141,9 @@ function checkalias {
 
     $alias = Get-Alias -Name $Name -ErrorAction SilentlyContinue
     if ($alias) {
-        "Alias '$Name' exists -> $($alias.Definition)" -ForegroundColor Yellow
+        "Alias '$Name' exists -> $($alias.Definition)"
     } else {
-        "Alias '$Name' does not exist" -ForegroundColor Green
+        "Alias '$Name' does not exist"
     }
 }
 
