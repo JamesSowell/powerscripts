@@ -7,6 +7,10 @@ Set-Alias nn ls
 Set-Alias cs clear
 Set-Alias grep findstr
 
+function restartshell {
+    . $PROFILE
+}
+
 function la {
     Get-ChildItem -Force
 }
