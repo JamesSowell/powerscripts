@@ -155,26 +155,49 @@ function checkalias {
         "Alias '$Name' does not exist"
     }
 }
-
 function gco {
     param(
         [Parameter(Position=0)]
-        [string]$sel
+        [string]$sel,
+        [switch]$all   # include remotes
     )
 
+    # checkout by number
     if ($sel -match '^\d+$') {
         $i = [int]$sel
-        if ($global:lastBranches -and $i -ge 0 -and $i -lt $global:lastBranches.Count) {
-            git checkout -- $global:lastBranches[$i]
+        if (-not $global:lastBranches -or $i -lt 0 -or $i -ge $global:lastBranches.Count) {
+            Write-Error "Index out of range. Run: gco"
             return
         }
+
+        $b = ($global:lastBranches[$i] -as [string]).Trim()
+
+        # If it's a remote branch like origin/foo, create tracking branch
+        if ($b -match '^[^/]+/.+') {
+            $local = ($b -split '/', 2)[1]
+            git switch -c $local --track $b
+        } else {
+            git switch -- $b
+        }
+        return
     }
 
-    $global:lastBranches = @(git branch --format="%(refname:short)")
+    # list branches (clean names)
+    $refs = @('refs/heads')
+    if ($all) { $refs += 'refs/remotes' }
+
+    $global:lastBranches = @(
+        git for-each-ref $refs --format="%(refname:short)" |
+            Where-Object { $_ } |
+            ForEach-Object { $_.Trim() } |
+            Where-Object { $_ -and $_ -ne 'HEAD' }
+    )
+
     for ($i = 0; $i -lt $global:lastBranches.Count; $i++) {
         Write-Host "[$i] $($global:lastBranches[$i])"
     }
     Write-Host "`nCheckout with: gco <index>"
+    Write-Host "Include remotes with: gco -all"
 }
 
 
