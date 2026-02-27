@@ -155,7 +155,8 @@ function checkalias {
         "Alias '$Name' does not exist"
     }
 }
-function gst {
+
+function gswt {
     param(
         [Parameter(Position=0)]
         [string]$sel,
