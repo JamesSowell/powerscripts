@@ -156,6 +156,30 @@ function checkalias {
     }
 }
 
+function gco {
+    param (
+        [Parameter(Position = 0)]
+        [string]$input
+    )
+
+    # If user passes a number → checkout that branch
+    if ($input -match '^\d+$' -and $input -lt $global:lastBranches.Count) {
+        $branch = $global:lastBranches[$input]
+        git checkout $branch
+        return
+    }
+
+    # Otherwise → list branches and index them
+    $global:lastBranches = git branch --format="%(refname:short)" |
+        Where-Object { $_ -ne "" }
+
+    for ($i = 0; $i -lt $global:lastBranches.Count; $i++) {
+        Write-Host "[$i] $($global:lastBranches[$i])"
+    }
+
+    Write-Host "`nCheckout with: gco <index>"
+}
+
 
 
 # obsidian
