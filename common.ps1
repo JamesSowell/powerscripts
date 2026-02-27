@@ -71,6 +71,11 @@ function nomodules {
     }
 }
 
+function nopackagelock {
+    Get-ChildItem . -Recurse -Filter package-lock.json -File |
+        Remove-Item -Force
+}
+
 Set-Alias g git
 
 
