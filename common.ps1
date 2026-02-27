@@ -156,7 +156,7 @@ function checkalias {
     }
 }
 
-function gswt {
+function gst {
     param(
         [Parameter(Position=0)]
         [string]$sel,
