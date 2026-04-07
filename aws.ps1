@@ -231,7 +231,7 @@ function dservices {
 function clw {
     param(
         [Parameter(Mandatory = $true, Position = 0)]
-        [string]$LambdaName
+        [string]$LambdaName,
 
         [Parameter(Position = 1)]
         [string]$Filter = "processing|DONE|cleansing"
