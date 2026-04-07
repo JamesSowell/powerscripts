@@ -234,51 +234,64 @@ function clw {
         [string]$LambdaName,
 
         [Parameter(Position = 1)]
-        [string]$Filter = "processing|DONE|cleansing",
+        [string]$Since,
 
         [Parameter(Position = 2)]
-        [string]$Since
+        [string]$Filter,
+
+        [Parameter()]
+        [switch]$NoFollow
     )
 
     $logGroup = "/aws/lambda/$LambdaName"
 
     # --- Snapshot phase (count only) ---
-    if ($Since){
+    if ($Since) {
         $snapshotArgs = @(
             "logs", "tail", $logGroup,
             "--since", $Since
         )
     } else {
-        $snapshotArgs = $(
+        $snapshotArgs = @(
             "logs", "tail", $logGroup
         )
     }
 
-    $count = 
-        aws @snapshotArgs |
-        Select-String $Filter |
-        Measure-Object |
-        Select-Object -ExpandProperty Count
+    $snapshotOutput = aws @snapshotArgs
+
+    if ($Filter) {
+        $count = $snapshotOutput |
+            Select-String $Filter |
+            Measure-Object |
+            Select-Object -ExpandProperty Count
+    } else {
+        $count = @($snapshotOutput).Count
+    }
 
     $sinceLabel = if ($Since) { $Since } else { "all available" }
 
     Write-Host ""
-    Write-Host "[$LambdaName] Last $sinceLabel : $count matching log events"
+    Write-Host "[$LambdaName] Last $sinceLabel : $count log events"
     Write-Host ("-" * 60)
 
     # -- follow phase (live stream) ---
-    $followArgs = @(
-        "logs", "tail", $logGroup,
-        "--follow"
-    )
+    if (-not $NoFollow) {
+        $followArgs = @(
+            "logs", "tail", $logGroup,
+            "--follow"
+        )
 
-    if ($Since) {
-        $followArgs += @("--since", $Since)
+        if ($Since) {
+            $followArgs += @("--since", $Since)
+        }
+
+        if ($Filter) {
+            aws @followArgs | Select-String $Filter
+        } else {
+            aws @followArgs
+        }
     }
-
-    aws $followArgs | Select-String $Filter
 }
-
 
 # DON'T REALLY use this, just a bit too complicated. ONLY really use cloudwatch for POCs, not production code
 # which is filled with metaData and other information I don't ordinarilly need.
