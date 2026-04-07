@@ -234,7 +234,7 @@ function clw {
         [string]$LambdaName,
 
         [Parameter(Position = 1)]
-        [string]$Filter = "processing|DONE|cleansing"
+        [string]$Filter = "processing|DONE|cleansing",
 
         [Parameter(Position = 2)]
         [string]$Since
