@@ -228,7 +228,60 @@ function dservices {
     }
 }
 
+function clw {
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$LambdaName
 
+        [Parameter(Position = 1)]
+        [string]$Filter = "processing|DONE|cleansing"
+
+        [Parameter(Position = 2)]
+        [string]$Since
+    )
+
+    $logGroup = "/aws/lambda/$LambdaName"
+
+    # --- Snapshot phase (count only) ---
+    if ($Since){
+        $snapshotArgs = @(
+            "logs", "tail", $logGroup,
+            "--since", $Since
+        )
+    } else {
+        $snapshotArgs = $(
+            "logs", "tail", $logGroup
+        )
+    }
+
+    $count = 
+        aws @snapshotArgs |
+        Select-String $Filter |
+        Measure-Object |
+        Select-Object -ExpandProperty Count
+
+    $sinceLabel = if ($Since) { $Since } else { "all available" }
+
+    Write-Host ""
+    Write-Host "[$LambdaName] Last $sinceLabel : $count matching log events"
+    Write-Host ("-" * 60)
+
+    # -- follow phase (live stream) ---
+    $followArgs = @(
+        "logs", "tail", $logGroup,
+        "--follow"
+    )
+
+    if ($Since) {
+        $followArgs += @("--since", $Since)
+    }
+
+    aws $followArgs | Select-String $Filter
+}
+
+
+# DON'T REALLY use this, just a bit too complicated. ONLY really use cloudwatch for POCs, not production code
+# which is filled with metaData and other information I don't ordinarilly need.
 # slap the ARN that you most care about here and debug away!
 function trail {
     [CmdletBinding()]
