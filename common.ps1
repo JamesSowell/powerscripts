@@ -205,6 +205,16 @@ function checkalias {
     }
 }
 
+# assumes that we are using our new name for 'en' instead of jq
+function enclip {
+    Get-Clipboard | jq .
+}
+
+function enclips {
+    Get-Clipboard | jq -S .
+}
+
+
 
 
 
