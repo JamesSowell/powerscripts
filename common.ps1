@@ -140,23 +140,10 @@ function gstash {
     git stash list
 }
 
-# powershell
-function checkalias {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory, Position=0)]
-        [string]$Name
-    )
 
-    $alias = Get-Alias -Name $Name -ErrorAction SilentlyContinue
-    if ($alias) {
-        "Alias '$Name' exists -> $($alias.Definition)"
-    } else {
-        "Alias '$Name' does not exist"
-    }
-}
 
-function gst {
+
+function gco {
     param(
         [Parameter(Position=0)]
         [string]$sel,
@@ -200,6 +187,25 @@ function gst {
     Write-Host "`nCheckout with: gco <index>"
     Write-Host "Include remotes with: gco -all"
 }
+
+
+# powershell
+function checkalias {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, Position=0)]
+        [string]$Name
+    )
+
+    $alias = Get-Alias -Name $Name -ErrorAction SilentlyContinue
+    if ($alias) {
+        "Alias '$Name' exists -> $($alias.Definition)"
+    } else {
+        "Alias '$Name' does not exist"
+    }
+}
+
+
 
 
 

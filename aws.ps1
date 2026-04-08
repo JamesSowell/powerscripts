@@ -261,7 +261,7 @@ function clw {
 
     if ($Filter) {
         $count = $snapshotOutput |
-            Select-String $Filter |
+            Select-String -SimpleMatch $Filter |
             Measure-Object |
             Select-Object -ExpandProperty Count
     } else {
@@ -286,7 +286,7 @@ function clw {
         }
 
         if ($Filter) {
-            aws @followArgs | Select-String $Filter
+            aws @followArgs | Select-String -SimpleMatch $Filter
         } else {
             aws @followArgs
         }
