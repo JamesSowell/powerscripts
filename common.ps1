@@ -170,7 +170,7 @@ function gstashdrop {
 
     $target = "stash@{$n}"
     Write-Host "Dropping $target"
-    git stash drop --% $target
+    git stash drop $target
 }
 
 
