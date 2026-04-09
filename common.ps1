@@ -247,6 +247,8 @@ function enclips {
     Get-Clipboard | jq -S .
 }
 
+Set-Alias -Name rl -Value Invoke-History
+
 
 
 
