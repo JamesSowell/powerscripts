@@ -136,8 +136,41 @@ function gstashapply {
     git stash apply "stash@{$n}"
 }
 
-function gstash {
-    git stash list
+function gstashlist {
+    $stashes = git stash list
+
+    if (-not $stashes) {
+        Write-Host "No stashes found."
+        return
+    }
+
+    for ($i = 0; $i -lt $stashes.Count; $i++) {
+        Write-Host "[$i] $($stashes[$i])"
+    }
+}
+
+function gstashdrop {
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [int]$n
+    )
+
+    $stashes = git stash list
+
+    if (-not $stashes) {
+        Write-Host "No stashes found."
+        return
+    }
+
+    if ($n -lt 0 -or $n -ge $stashes.Count) {
+        Write-Host "Invalid stash index: $n"
+        Write-Host "Valid range: 0 to $($stashes.Count - 1)"
+        return
+    }
+
+    $target = "stash@{$n}"
+    Write-Host "Dropping $target"
+    git stash drop --% $target
 }
 
 
