@@ -233,13 +233,15 @@ function clw {
         [Parameter(Mandatory = $true, Position = 0)]
         [string]$LambdaName,
 
+        [Alias('s')]
         [Parameter(Position = 1)]
         [string]$Since,
 
+        [Alias('f')]
         [Parameter(Position = 2)]
         [string]$Filter,
 
-        [Parameter()]
+        [Alias('nf')]
         [switch]$NoFollow
     )
 
