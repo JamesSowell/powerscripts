@@ -125,6 +125,20 @@ function gnb {
     git switch $branches[$nextIndex]
 }
 
+# restoring files from other commits
+function grestorepackagelocks {
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$Commit
+    )
+
+    restore `
+        --source=$Commit `
+        --worktree `
+        --staged `
+        -- ':(glob)**/package.json' ':(glob)**/package-lock.json'
+}
+
 
 # stash
 function gstashapply {
