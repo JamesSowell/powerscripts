@@ -132,7 +132,7 @@ function grestorepackagelocks {
         [string]$Commit
     )
 
-    restore `
+    git restore `
         --source=$Commit `
         --worktree `
         --staged `
