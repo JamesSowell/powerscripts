@@ -43,6 +43,14 @@ function ccat {
     }
 }
 
+function codethis {
+    code .
+}
+
+function openthis {
+    explorer .
+}
+
 function nt {
     wt -w 0 nt -d .
 }
@@ -131,7 +139,6 @@ function grestorepackagelocks {
         [Parameter(Mandatory = $true, Position = 0)]
         [string]$Commit
     )
-
     git restore `
         --source=$Commit `
         --worktree `
